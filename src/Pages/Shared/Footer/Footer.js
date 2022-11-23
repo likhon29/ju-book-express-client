@@ -1,10 +1,34 @@
 import React from 'react';
+import logo from '../../../Assets/images/logo1.png';
 
 const Footer = () => {
     return (
-        <div>
-            <h1 className="text-3xl">Footer</h1>
-        </div>
+        <footer className="footer p-32 bg-black text-white">
+            <div>
+                <img width="150"  src={logo} alt="" />
+                <p>JU Book Express<br/>Providing reliable service since 2022</p>
+            </div>
+            <div>
+                <span className="footer-title">Services</span>
+                <a href="/"className="link link-hover">Branding</a>
+                <a href="/"className="link link-hover">Design</a>
+                <a href="/"className="link link-hover">Marketing</a>
+                <a href="/"className="link link-hover">Advertisement</a>
+            </div>
+            <div>
+                <span className="footer-title">Company</span>
+                <a href="/"className="link link-hover">About us</a>
+                <a href="/"className="link link-hover">Contact</a>
+                <a href="/"className="link link-hover">Jobs</a>
+                <a href="/"className="link link-hover">Press kit</a>
+            </div>
+            <div>
+                <span className="footer-title">Legal</span>
+                <a href="/"className="link link-hover">Terms of use</a>
+                <a href="/"className="link link-hover">Privacy policy</a>
+                <a href="/"className="link link-hover">Cookie policy</a>
+            </div>
+        </footer>
     );
 };
 
