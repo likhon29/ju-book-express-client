@@ -26,7 +26,7 @@ const Navbar = () => {
                         {navItems}
                     </ul>
                 </div>
-                <Link to="/" >
+                <Link to="/" className="mx-20">
                     <img width="30%" src={logo} alt="" /> 
                    
                 </Link>
