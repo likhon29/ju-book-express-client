@@ -1,31 +1,52 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
 const Signup = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit,formState: { errors } } = useForm();
+  const { createUser, updateUser } = useContext(AuthContext);
+  const [signUpError, setSignUPError] = useState("");
+  const [createdUserEmail, setCreatedUserEmail] = useState("");
+  const handleSignUp = (data) => {
+    
+    console.log(data);
+    setSignUPError('');
+    createUser(data.email, data.password)
+        .then(result => {
+            const user = result.user;
+            console.log(user);
+            toast('User Created Successfully.')
+            const userInfo = {
+                displayName: data.name
+            }
+            updateUser(userInfo)
+                .then(() => {
 
-    const handleSignUp = (data) => {
-      console.log(data);
-    // setSignUPError('');
-    // createUser(data.email, data.password)
-    //     .then(result => {
-    //         const user = result.user;
-    //         console.log(user);
-    //         toast('User Created Successfully.')
-    //         const userInfo = {
-    //             displayName: data.name
-    //         }
-    //         updateUser(userInfo)
-    //             .then(() => {
-    //                 saveUser(data.name, data.email);
-    //             })
-    //             .catch(err => console.log(err));
+                    // saveUser(data.name, data.email);
+                })
+                .catch(err => console.log(err));
+        })
+        .catch(error => {
+            console.log(error)
+            setSignUPError(error.message)
+        });
+    };
+    
+    // const saveUser = (name, email) =>{
+    //     const user ={name, email};
+    //     fetch('https://doctors-portal-server-rust.vercel.app/users', {
+    //         method: 'POST',
+    //         headers: {
+    //             'content-type': 'application/json'
+    //         },
+    //         body: JSON.stringify(user)
     //     })
-    //     .catch(error => {
-    //         console.log(error)
-    //         setSignUPError(error.message)
-    //     });
-  };
+    //     .then(res => res.json())
+    //     .then(data =>{
+    //         setCreatedUserEmail(email);
+    //     })
+    // }
   return (
     <div className="h-[800px] flex justify-center items-center">
       <div className="w-96 p-7">
@@ -43,7 +64,7 @@ const Signup = () => {
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {/* {errors.name && <p className='text-red-500'>{errors.name.message}</p>} */}
+            {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
           </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
@@ -53,11 +74,11 @@ const Signup = () => {
             <input
               type="email"
               {...register("email", {
-                required: true,
+                 required: "Email is Required",
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {/* {errors.email && <p className='text-red-500'>{errors.email.message}</p>} */}
+            {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
           </div>
           <div className="form-control w-full max-w-xs my-5">
             <label className="label">
@@ -80,14 +101,21 @@ const Signup = () => {
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {/* {errors.password && <p className='text-red-500'>{errors.password.message}</p>} */}
-
-            <select {...register("role")} className="my-2" clas="true" >
-              <option value="buyer">Buyer</option>
-              <option value="seller">Seller</option>
-            </select>
+            {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
+            <div className="form-control w-full max-w-xs text-secondary text-2xl">
+              <select {...register("role")} clas="true">
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+              </select>
+            </div>
           </div>
-
+          <div className="form-control w-full max-w-xs">
+                    <label className="label"> <span className="label-text">Photo</span></label>
+                    <input type="file" {...register("image", {
+                        required: "Photo is Required"
+                    })} className="input input-bordered w-full max-w-xs" />
+                    {errors.img && <p className='text-red-500'>{errors.img.message}</p>}
+                </div>
           <input
             className="btn btn-accent w-full mt-4"
             value="Sign Up"
