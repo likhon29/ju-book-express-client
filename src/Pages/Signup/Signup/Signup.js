@@ -1,55 +1,69 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
+import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
 const Signup = () => {
-  const { register, handleSubmit,formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { createUser, updateUser } = useContext(AuthContext);
   const [signUpError, setSignUPError] = useState("");
-  const [createdUserEmail, setCreatedUserEmail] = useState("");
+    const [createdUserEmail, setCreatedUserEmail] = useState("");
+    const navigate = useNavigate();
   const handleSignUp = (data) => {
-    
     console.log(data);
-    setSignUPError('');
+    setSignUPError("");
     createUser(data.email, data.password)
-        .then(result => {
-            const user = result.user;
-            console.log(user);
-            toast('User Created Successfully.')
-            const userInfo = {
-                displayName: data.name
-            }
-            updateUser(userInfo)
-                .then(() => {
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast("User Created Successfully.");
+        const userInfo = {
+          displayName: data.name,
+          photoUrl: data.image,
+          // role: data.role
+        };
+        updateUser(userInfo)
+          .then(() => {
+            saveUser(data);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((error) => {
+        console.log(error);
+        setSignUPError(error.message);
+      });
+  };
 
-                    // saveUser(data.name, data.email);
-                })
-                .catch(err => console.log(err));
-        })
-        .catch(error => {
-            console.log(error)
-            setSignUPError(error.message)
-        });
-    };
-    
-    // const saveUser = (name, email) =>{
-    //     const user ={name, email};
-    //     fetch('https://doctors-portal-server-rust.vercel.app/users', {
-    //         method: 'POST',
-    //         headers: {
-    //             'content-type': 'application/json'
-    //         },
-    //         body: JSON.stringify(user)
-    //     })
-    //     .then(res => res.json())
-    //     .then(data =>{
-    //         setCreatedUserEmail(email);
-    //     })
-    // }
+  const saveUser = (data) =>{
+      const user = {
+          name: data.name,
+          email: data.email,
+          image: data.image,
+          role: data.role,
+      };
+      console.log(user);
+      fetch('https://doctors-portal-server-rust.vercel.app/users', {
+          method: 'POST',
+          headers: {
+              'content-type': 'application/json'
+          },
+          body: JSON.stringify(user)
+      })
+      .then(res => res.json())
+      .then(data =>{
+          setCreatedUserEmail(user.email);
+          console.log(data);
+          navigate('/');
+      })
+  }
   return (
     <div className="h-[800px] flex justify-center items-center">
-      <div className="w-96 p-7">
+      <div className="w-100 p-7">
         <h2 className="text-xl text-center">Sign Up</h2>
         <form onSubmit={handleSubmit(handleSignUp)}>
           <div className="form-control w-full max-w-xs">
@@ -64,7 +78,9 @@ const Signup = () => {
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-red-500">{errors.name.message}</p>
+            )}
           </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
@@ -74,11 +90,13 @@ const Signup = () => {
             <input
               type="email"
               {...register("email", {
-                 required: "Email is Required",
+                required: "Email is Required",
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500">{errors.email.message}</p>
+            )}
           </div>
           <div className="form-control w-full max-w-xs my-5">
             <label className="label">
@@ -101,27 +119,37 @@ const Signup = () => {
               })}
               className="input input-bordered w-full max-w-xs"
             />
-            {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
-            <div className="form-control w-full max-w-xs text-secondary text-2xl">
-              <select {...register("role")} clas="true">
+            {errors.password && (
+              <p className="text-red-500">{errors.password.message}</p>
+            )}
+           
+              <select {...register("role")} className="select select-bordered w-full max-w-xs mt-3" defaultValue={'buyer'}>
+               
                 <option value="buyer">Buyer</option>
                 <option value="seller">Seller</option>
               </select>
-            </div>
+            
           </div>
           <div className="form-control w-full max-w-xs">
-                    <label className="label"> <span className="label-text">Photo</span></label>
-                    <input type="file" {...register("image", {
-                        required: "Photo is Required"
-                    })} className="input input-bordered w-full max-w-xs" />
-                    {errors.img && <p className='text-red-500'>{errors.img.message}</p>}
-                </div>
+            <label className="label">
+              {" "}
+              <span className="label-text">Photo</span>
+            </label>
+            <input
+              type="file"
+              {...register("image", {
+                required: "Photo is Required",
+              })}
+              className="input input-bordered w-full max-w-xs"
+            />
+            {errors.img && <p className="text-red-500">{errors.img.message}</p>}
+          </div>
           <input
             className="btn btn-accent w-full mt-4"
             value="Sign Up"
             type="submit"
           />
-          {/* {signUpError && <p className='text-red-600'>{signUpError}</p>} */}
+          {signUpError && <p className='text-red-600'>{signUpError}</p>}
         </form>
         <p>
           Already have an account{" "}
@@ -129,8 +157,9 @@ const Signup = () => {
             Please Login
           </Link>
         </p>
-        <div className="divider">OR</div>
-        <button className="btn btn-outline w-full">CONTINUE WITH GOOGLE</button>
+              <div className="divider">OR</div>
+              <SocialLogin></SocialLogin>
+        {/* <button className="btn btn-outline w-full">CONTINUE WITH GOOGLE</button> */}
       </div>
     </div>
   );
