@@ -3,6 +3,8 @@ import Main from "../../Layout/Main/Main";
 import Blogs from "../../Pages/Blogs/Blogs";
 import CategoryDetails from "../../Pages/Categories/CategoryDetails/CategoryDetails";
 import Home from "../../Pages/Home/Home/Home";
+import Login from "../../Pages/Login/Login/Login";
+import Signup from "../../Pages/Signup/Signup/Signup";
 
 const router = createBrowserRouter([
     {
@@ -19,7 +21,8 @@ const router = createBrowserRouter([
             },
             {
                 path: "/category/:id",
-                element: <CategoryDetails></CategoryDetails>
+                element: <CategoryDetails></CategoryDetails>,
+                loader : ({params})=>fetch(`http://localhost:5000/allCategories/${params.id}`)
             }
             ,
             {
@@ -27,8 +30,16 @@ const router = createBrowserRouter([
                 element: <Blogs></Blogs>
             },
             {
+                path: '/login',
+                element: <Login></Login>
+            },
+            {
+                path: '/register',
+                element: <Signup></Signup>
+            },
+            {
                 path: "/about",
-                element: <h1>ABout</h1>
+                element: <h1>About</h1>
             }
         ]
     }

@@ -4,6 +4,7 @@ import clock from '../../../Assets/images/logo1.png';
 import marker from '../../../Assets/images/logo1.png';
 import phone from '../../../Assets/images/logo1.png';
 import { useQuery } from '@tanstack/react-query';
+import Loading from '../../Shared/Loading/Loading';
 const BookCategories = () => {
     // const categoriesData = [
     //     {
@@ -59,6 +60,9 @@ const BookCategories = () => {
         }
     })
 
+    if(isLoading){
+        return <Loading></Loading>
+    }
     return (
         <div className="">
             <h1 className="text-5xl">Book Categories</h1>
