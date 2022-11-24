@@ -11,6 +11,7 @@ const Login = () => {
     const [loginUserEmail, setLoginUserEmail] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
+    const from = location.state?.from?.pathname || '/';
     const handleLogin = data => {
         console.log(data);
         setLoginError('');
@@ -19,7 +20,7 @@ const Login = () => {
                 const user = result.user;
                 console.log(user);
                 setLoginUserEmail(data.email);
-                navigate('/')
+                navigate(from, { replace: true });
             })
             .catch(error => {
                 console.log(error.message)
