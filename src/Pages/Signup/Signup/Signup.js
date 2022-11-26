@@ -12,55 +12,80 @@ const Signup = () => {
   } = useForm();
   const { createUser, updateUser } = useContext(AuthContext);
   const [signUpError, setSignUPError] = useState("");
-    const [createdUserEmail, setCreatedUserEmail] = useState("");
-    const navigate = useNavigate();
+  const [createdUserEmail, setCreatedUserEmail] = useState("");
+  const [userImg, setUserImg] = useState("");
+  const navigate = useNavigate();
+
+  const imageHostKey = process.env.REACT_APP_imgbb_key;
   const handleSignUp = (data) => {
-    console.log(data);
+    const image = data.image[0];
     setSignUPError("");
+    const formData = new FormData();
+    formData.append("image", image);
+    const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+    fetch(url, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((imgData) => {
+        if (imgData.success) {
+          console.log(imgData.data.url);
+          setUserImg(imgData.data.url);
+          console.log(userImg);
+          const user = {
+            name: data.name,
+            email: data.email,
+            image: imgData.data.url,
+            role: data.role,
+            
+          };
+          saveUser(user);
+        }
+      });
     createUser(data.email, data.password)
       .then((result) => {
         const user = result.user;
         console.log(user);
         toast("User Created Successfully.");
-        const userInfo = {
-          displayName: data.name,
-          photoUrl: data.image,
-          // role: data.role
-        };
-        updateUser(userInfo)
-          .then(() => {
-            saveUser(data);
-          })
-          .catch((err) => console.log(err));
+        handleUpdateUserProfile(data.name, userImg);
+        // updateUser({ displayName: data.name, photoURL: userImg })
+        //   .then(() => {
+        //     // saveUser(data);
+        //   })
+        //   .catch((err) => console.log(err));
       })
       .catch((error) => {
         console.log(error);
         setSignUPError(error.message);
       });
   };
+  const handleUpdateUserProfile = (name,photoURL) => {
+    const profile = {
+      displayName: name,
+      photoURL: photoURL
+    }
+    updateUser(profile)
+      .then(() => {
 
-  const saveUser = (data) =>{
-      const user = {
-          name: data.name,
-          email: data.email,
-          image: data.image,
-          role: data.role,
-      };
-      console.log(user);
-      fetch('https://doctors-portal-server-rust.vercel.app/users', {
-          method: 'POST',
-          headers: {
-              'content-type': 'application/json'
-          },
-          body: JSON.stringify(user)
       })
-      .then(res => res.json())
-      .then(data =>{
-          setCreatedUserEmail(user.email);
-          console.log(data);
-          navigate('/');
-      })
-  }
+      .catch((error) => console.error(error));
+  };
+  const saveUser = (user) => {
+    fetch("http://localhost:5000/users", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCreatedUserEmail(data.email);
+        console.log(data);
+        navigate("/");
+      });
+  };
   return (
     <div className="h-[800px] flex justify-center items-center">
       <div className="w-100 p-7">
@@ -122,13 +147,15 @@ const Signup = () => {
             {errors.password && (
               <p className="text-red-500">{errors.password.message}</p>
             )}
-           
-              <select {...register("role")} className="select select-bordered w-full max-w-xs mt-3" defaultValue={'buyer'}>
-               
-                <option value="buyer">Buyer</option>
-                <option value="seller">Seller</option>
-              </select>
-            
+
+            <select
+              {...register("role")}
+              className="select select-bordered w-full max-w-xs mt-3"
+              defaultValue={"buyer"}
+            >
+              <option value="buyer">Buyer</option>
+              <option value="seller">Seller</option>
+            </select>
           </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
@@ -149,7 +176,7 @@ const Signup = () => {
             value="Sign Up"
             type="submit"
           />
-          {signUpError && <p className='text-red-600'>{signUpError}</p>}
+          {signUpError && <p className="text-red-600">{signUpError}</p>}
         </form>
         <p>
           Already have an account{" "}
@@ -157,8 +184,8 @@ const Signup = () => {
             Please Login
           </Link>
         </p>
-              <div className="divider">OR</div>
-              <SocialLogin></SocialLogin>
+        <div className="divider">OR</div>
+        <SocialLogin></SocialLogin>
         {/* <button className="btn btn-outline w-full">CONTINUE WITH GOOGLE</button> */}
       </div>
     </div>
