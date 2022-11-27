@@ -17,6 +17,7 @@ const SocialLogin = () => {
           email: user.email,
           image: user.photoURL,
           role: "buyer",
+          
         };
         saveUser(userInfo);
         console.log(user);

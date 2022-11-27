@@ -7,7 +7,6 @@ import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 import Loading from "../../../Shared/Loading/Loading";
 
 const AddProduct = () => {
-  const [cid, setCid] = useState(0);
   const {
     register,
     handleSubmit,
@@ -15,7 +14,20 @@ const AddProduct = () => {
   } = useForm();
 
   const { user } = useContext(AuthContext);
-  console.log(user);
+
+  const {
+    data: userInfo = [],
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: async () => {
+      const res = await fetch(`http://localhost:5000/user/${user.email}`);
+      const data = await res.json();
+      return data;
+    },
+  });
+
   const imageHostKey = process.env.REACT_APP_imgbb_key;
 
   const navigate = useNavigate();
@@ -23,12 +35,7 @@ const AddProduct = () => {
   const handleAddProduct = (data) => {
     const cat_name = data.category;
     console.log(cat_name);
-    if (cat_name === "Job Preparation") {
-        
-          setCid(1);
-          console.log(cid,"true")
-      }
-      console.log(cid,"cid")
+
     const image = data.image[0];
     const formData = new FormData();
     formData.append("image", image);
@@ -45,6 +52,7 @@ const AddProduct = () => {
           const bookInfo = {
             seller_name: user.displayName,
             seller_email: user.email,
+            seller_status: userInfo.status,
             name: data.bookName,
             image: imgData.data.url,
             price: data.price,
@@ -54,7 +62,8 @@ const AddProduct = () => {
             date: date,
             number: data.number,
             category: data.category,
-            
+            productStatus: 'available',
+            isAdvertised:'no',
             condition: data.condition,
             description: data.description,
           };
@@ -184,25 +193,13 @@ const AddProduct = () => {
             <option value="" disabled>
               Select Book Category
             </option>
-            <option onChange={() => setCid("1")} value="Job Preparation">
-              Job Preparation
-            </option>
-            <option onChange={() => setCid("5")} value="Admission Test">
-              Admission Test
-            </option>
+            <option value="Job Preparation">Job Preparation</option>
+            <option value="Admission Test">Admission Test</option>
 
-            <option onChange={() => setCid("2")} value="University Academic">
-              University Academic
-            </option>
-            <option onChange={() => setCid("3")} value="Science Fiction">
-              Science Fiction
-            </option>
-            <option onChange={() => setCid("4")} value="Novel and Story">
-              Novel and Story
-            </option>
-            <option onChange={() => setCid("6")} value="Others">
-              Others
-            </option>
+            <option value="University Academic">University Academic</option>
+            <option value="Science Fiction">Science Fiction</option>
+            <option value="Novel and Story">Novel and Story</option>
+            <option value="Others">Others</option>
           </select>
         </div>
         <div className="form-control w-full max-w-xs">

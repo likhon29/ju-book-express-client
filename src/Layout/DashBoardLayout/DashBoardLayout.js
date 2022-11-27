@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../../Contexts/AuthProvider/AuthProvider";
 import useAdmin from "../../Hooks/useAdmin";
 import useSeller from "../../Hooks/useSeller";
+import Footer from "../../Pages/Shared/Footer/Footer";
 import Navbar from "../../Pages/Shared/Navbar/Navbar";
 
 const DashBoardLayout = () => {
@@ -18,7 +19,7 @@ const DashBoardLayout = () => {
           type="checkbox"
           className="drawer-toggle"
         />
-        <div className="drawer-content">
+        <div className="drawer-content ">
           <Outlet></Outlet>
         </div>
         <div className="drawer-side ">
@@ -65,6 +66,7 @@ const DashBoardLayout = () => {
           </ul>
         </div>
       </div>
+      <Footer></Footer>
     </div>
   );
 };

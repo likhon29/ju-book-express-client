@@ -11,6 +11,7 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
   const { createUser, updateUser } = useContext(AuthContext);
+  
   const [signUpError, setSignUPError] = useState("");
   const [createdUserEmail, setCreatedUserEmail] = useState("");
   const [userImg, setUserImg] = useState("");
@@ -32,13 +33,13 @@ const Signup = () => {
         if (imgData.success) {
           console.log(imgData.data.url);
           setUserImg(imgData.data.url);
-          console.log(userImg);
+         
           const user = {
             name: data.name,
             email: data.email,
             image: imgData.data.url,
             role: data.role,
-            
+            status: "unverified",
           };
           saveUser(user);
         }
@@ -60,15 +61,13 @@ const Signup = () => {
         setSignUPError(error.message);
       });
   };
-  const handleUpdateUserProfile = (name,photoURL) => {
+  const handleUpdateUserProfile = (name, photoURL) => {
     const profile = {
       displayName: name,
-      photoURL: photoURL
-    }
+      photoURL: photoURL,
+    };
     updateUser(profile)
-      .then(() => {
-
-      })
+      .then(() => {})
       .catch((error) => console.error(error));
   };
   const saveUser = (user) => {

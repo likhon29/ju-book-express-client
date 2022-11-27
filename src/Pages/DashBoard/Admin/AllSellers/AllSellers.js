@@ -20,7 +20,8 @@ const AllSellers = () => {
       return data;
     },
   });
-    const [sellers, setSellers] = useState(allSellers);
+  const [sellers, setSellers] = useState(allSellers);
+ 
     console.log(allSellers);
     const handleMakeAdmin = id => {
         fetch(`http://localhost:5000/users/admin/${id}`, {
@@ -55,9 +56,25 @@ const AllSellers = () => {
               }
             });
         }
-      };
+  };
+  const handleVerify=(id) => {
+    fetch(`http://localhost:5000/users/seller/${id}`, {
+      method: 'PUT', 
+      // headers: {
+      //     authorization: `bearer ${localStorage.getItem('accessToken')}`
+      // }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.modifiedCount > 0) {
+        
+          toast.success('User Verified successfully.')
+          refetch();
+      }
+  })
+  }
   return (
-    <div>
+    <div className="mx-20">
       <h3 className="text-3xl mb-5">All Sellers</h3>
       <div className="overflow-x-auto">
         <table className="table w-full">
@@ -67,7 +84,7 @@ const AllSellers = () => {
               <th>Photo</th>
               <th>Seller Name</th>
               <th>Email</th>
-              <th>Verification</th>
+              {/* <th>Verification</th> */}
               <th>Status</th>
               {/* <th>Advertisement</th> */}
               <th>Action</th>
@@ -91,11 +108,14 @@ const AllSellers = () => {
                   <td>{sellers.name}</td>
                   <td>{sellers.email}</td>
                   <td>
-                    <button className="btn btn-primary btn-sm">
-                     Not Verified
-                    </button>
+                    {sellers.status==='Verified' ? <button className="btn btn-secondary btn-sm">
+                     {sellers.status}
+                    </button> : <button onClick={()=>handleVerify(sellers._id)} className="btn btn-danger btn-sm">
+                     {sellers.status}
+                    </button> }
+                    
                   </td>
-                  <td>{ sellers?.role !== 'admin' && <button onClick={() => handleMakeAdmin(sellers._id)} className='btn btn-xs btn-primary'>Make Admin</button>}</td>
+                  {/* <td>{ sellers?.role !== 'admin' && <button onClick={() => handleMakeAdmin(sellers._id)} className='btn btn-xs btn-primary'>Make Admin</button>}</td> */}
 
                   {/* <td> */}
                   {/* <button className="btn btn-primary btn-sm">Advertised</button> */}

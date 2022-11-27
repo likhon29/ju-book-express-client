@@ -19,11 +19,19 @@ import AdminRoute from "../AdminRoute/AdminRoute";
 import SellerRoute from "../SellerRoute/SellerRoute";
 import BookCategories from "../../Pages/Home/BookCategories/BookCategories";
 import BookCategory from "../../Pages/Categories/BookCategory/BookCategory";
+import Profile from "../../Pages/Shared/Profile/Profile";
+import NotFound from "../../Pages/Others/NotFound";
+import BlogDetail from "../../Pages/Blogs/Blog/BlogDetail";
+import Payment from "../../Pages/DashBoard/Payment/Payment";
+import BuyerRoute from "../BuyerRoute/BuyerRoute";
+import DisplayError from "../../Pages/Shared/DisplayError/DisplayError";
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <Main></Main>,
+        errorElement: <DisplayError></DisplayError>,
+
         children: [
             {
                 path: "/",
@@ -46,6 +54,10 @@ const router = createBrowserRouter([
                 element: <Blogs></Blogs>
             },
             {
+                path: "/blog/:id",
+                element: <BlogDetail></BlogDetail>
+            },
+            {
                 path: '/login',
                 element: <Login></Login>
             },
@@ -62,18 +74,24 @@ const router = createBrowserRouter([
     {
         path: '/dashboard',
         element: <PrivateRoute><DashBoardLayout></DashBoardLayout></PrivateRoute>,
+        errorElement: <DisplayError></DisplayError>,
         children: [
             {
                 path: '/dashboard',
-                element:<MyOrders></MyOrders>
+                element:<Profile></Profile>
             },
             {
                 path: '/dashboard/myOrders',
-                element: <MyOrders></MyOrders>
+                element: <BuyerRoute><MyOrders></MyOrders></BuyerRoute>
             },
             {
                 path: '/dashboard/myWishLists',
-                element: <MyWishList></MyWishList>
+                element: <BuyerRoute><MyWishList></MyWishList></BuyerRoute>
+            },
+            {
+                path: '/dashboard/payment/:id',
+                element: <BuyerRoute><Payment></Payment></BuyerRoute>,
+                loader: ({params})=>fetch(`http://localhost:5000/bookings/${params.id}`)
             },
             {
                 path: '/dashboard/addProduct',
@@ -99,8 +117,16 @@ const router = createBrowserRouter([
                 path: '/dashboard/reportedItem',
                 element: <AdminRoute><ReportedItem></ReportedItem></AdminRoute> 
             },
+            {
+                path: '/dashboard/payment',
+                element: <AdminRoute><ReportedItem></ReportedItem></AdminRoute> 
+            },
             
         ]
+    },
+    {
+        path: "*",
+        element: <NotFound></NotFound>
     }
 ])
 export default router;

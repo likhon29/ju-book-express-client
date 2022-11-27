@@ -2,8 +2,8 @@ import React from 'react';
 
 const ReportedItem = () => {
     return (
-        <div>
-            <h1>Reported Item</h1>
+        <div className="mx-20">
+            <h1 className="text-3xl">Reported Item</h1>
         </div>
     );
 };
