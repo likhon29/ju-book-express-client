@@ -1,12 +1,32 @@
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigation } from 'react-router-dom';
+import CheckoutForm from './CheckoutForm';
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
 
 const Payment = () => {
-    const data  = useLoaderData();
-    console.log("booking data",data)
+    const booking = useLoaderData();
+    // const navigation = useNavigation();
+    const { bookName, price, bookingDate, slot } = booking;
+    // if(navigation.state === "loading"){
+    //     return <Loading></Loading>
+    // }
     return (
-        <div>
-            <h3 className="text-4xl mx-20 my-5">Payment for <span className="text-5xl text-warning">{data.bookName }</span></h3>
+        <div className="flex  items-center justify-center mt-20  mx-auto  " >
+            <div className="3/4 rounded shadow-xl bg-slate-200 p-10">
+            <h3 className="text-3xl text-warning">Payment for {bookName}</h3>
+            <p className="text-xl">Please pay <strong className="text-primary">Tk. {price}</strong> for your booking on {bookingDate.split('T')[0]}</p>
+            <div className='w-96 my-12'>
+                <Elements stripe={stripePromise}>
+                    <CheckoutForm
+                        booking={booking}
+                    />
+                </Elements>
+            </div>
+            </div>
+           
         </div>
     );
 };
