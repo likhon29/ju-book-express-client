@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import logo from "../../../Assets/images/logo1.png";
 import icon from "../../../Assets/images/icon.png";
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
+import axios from "axios";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState({});
   const { user } = useContext(AuthContext);
   useEffect(() => {
-    fetch(`https://ju-book-express-server.vercel.app/user/${user.email}`)
-      .then((res) => res.json())
+    axios.get(`https://ju-book-express-server.vercel.app/user/${user.email}`)
+      // .then((res) => res.json())
       .then((data) => setUserInfo(data));
   }, [user.email]);
   console.log(userInfo);
