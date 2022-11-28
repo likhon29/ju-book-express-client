@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
+import useToken from "../../../Hooks/useToken";
 import SocialLogin from "../../Shared/SocialLogin/SocialLogin";
 const Signup = () => {
   const {
@@ -11,57 +12,61 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
   const { createUser, updateUser } = useContext(AuthContext);
-  
+
   const [signUpError, setSignUPError] = useState("");
   const [createdUserEmail, setCreatedUserEmail] = useState("");
   const [userImg, setUserImg] = useState("");
+  const [token] = useToken(createdUserEmail);
   const navigate = useNavigate();
 
   const imageHostKey = process.env.REACT_APP_imgbb_key;
+  if (token) {
+    navigate("/");
+  }
+
   const handleSignUp = (data) => {
-    const image = data.image[0];
     setSignUPError("");
-    const formData = new FormData();
-    formData.append("image", image);
-    const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
-    fetch(url, {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((imgData) => {
-        if (imgData.success) {
-          console.log(imgData.data.url);
-          setUserImg(imgData.data.url);
-         
-          const user = {
-            name: data.name,
-            email: data.email,
-            image: imgData.data.url,
-            role: data.role,
-            status: "unverified",
-          };
-          saveUser(user);
-        }
-      });
     createUser(data.email, data.password)
       .then((result) => {
         const user = result.user;
         console.log(user);
         toast("User Created Successfully.");
-        handleUpdateUserProfile(data.name, userImg);
-        // updateUser({ displayName: data.name, photoURL: userImg })
-        //   .then(() => {
-        //     // saveUser(data);
-        //   })
-        //   .catch((err) => console.log(err));
+
+        const image = data.image[0];
+
+        const formData = new FormData();
+        formData.append("image", image);
+        const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+        fetch(url, {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((imgData) => {
+            if (imgData.success) {
+              console.log(imgData.data.url);
+              setUserImg(imgData.data.url);
+
+              const user = {
+                name: data.name,
+                email: data.email,
+                image: imgData.data.url,
+                role: data.role,
+                status: "unverified",
+              };
+              handleUpdateUserProfile(data.name, image);
+              saveUser(user);
+            }
+          });
       })
       .catch((error) => {
         console.log(error);
         setSignUPError(error.message);
       });
   };
+
   const handleUpdateUserProfile = (name, photoURL) => {
+    console.log(photoURL, "added photo");
     const profile = {
       displayName: name,
       photoURL: photoURL,
@@ -71,7 +76,7 @@ const Signup = () => {
       .catch((error) => console.error(error));
   };
   const saveUser = (user) => {
-    fetch("http://localhost:5000/users", {
+    fetch("https://ju-book-express-server.vercel.app/users", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -80,9 +85,21 @@ const Signup = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setCreatedUserEmail(data.email);
+        setCreatedUserEmail(user.email);
         console.log(data);
+        getUserToken(user.email);
         navigate("/");
+      });
+  };
+
+  const getUserToken = (email) => {
+    fetch(`https://ju-book-express-server.vercel.app/jwt?email=${email}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          // setToken(data.accessToken);
+        }
       });
   };
   return (

@@ -6,9 +6,10 @@ import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 const AllSellers = () => {
   const { user } = useContext(AuthContext);
 
-  const url = "http://localhost:5000/allSellers?role=seller";
+  const url =
+    "https://ju-book-express-server.vercel.app/allSellers?role=seller";
 
-  const { data: allSellers = [] ,refetch} = useQuery({
+  const { data: allSellers = [], refetch } = useQuery({
     queryKey: ["allSellers", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
@@ -21,58 +22,57 @@ const AllSellers = () => {
     },
   });
   const [sellers, setSellers] = useState(allSellers);
- 
-    console.log(allSellers);
-    const handleMakeAdmin = id => {
-        fetch(`http://localhost:5000/users/admin/${id}`, {
-            method: 'PUT', 
-            headers: {
-                authorization: `bearer ${localStorage.getItem('accessToken')}`
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.modifiedCount > 0){
-                toast.success('Make admin successful.')
-                refetch();
-            }
-        })
-    }
-    const handleDelete = (id) => {
-        const proceed = window.confirm(
-          "Are you sure, you want to delete this sellers?"
-        );
-        if (proceed) {
-          fetch(`http://localhost:5000/users/admin/${id}`, {
-            method: "DELETE",
-            // authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.deletedCount > 0) {
-                const remaining = sellers.filter((sellers) => sellers._id !== id);
-                setSellers(remaining);
-                alert("User deleted successfully");
-              }
-            });
+
+  console.log(allSellers);
+  const handleMakeAdmin = (id) => {
+    fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.modifiedCount > 0) {
+          toast.success("Make admin successful.");
+          refetch();
         }
+      });
   };
-  const handleVerify=(id) => {
-    fetch(`http://localhost:5000/users/seller/${id}`, {
-      method: 'PUT', 
+  const handleDelete = (id) => {
+    const proceed = window.confirm(
+      "Are you sure, you want to delete this sellers?"
+    );
+    if (proceed) {
+      fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
+        method: "DELETE",
+        // authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.deletedCount > 0) {
+            const remaining = sellers.filter((seller) => seller._id !== id);
+            setSellers(remaining);
+            alert("User deleted successfully");
+          }
+        });
+    }
+  };
+  const handleVerify = (id) => {
+    fetch(`https://ju-book-express-server.vercel.app/users/seller/${id}`, {
+      method: "PUT",
       // headers: {
       //     authorization: `bearer ${localStorage.getItem('accessToken')}`
       // }
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.modifiedCount > 0) {
-        
-          toast.success('User Verified successfully.')
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.modifiedCount > 0) {
+          toast.success("User Verified successfully.");
           refetch();
-      }
-  })
-  }
+        }
+      });
+  };
   return (
     <div className="mx-20">
       <h3 className="text-3xl mb-5">All Sellers</h3>
@@ -108,12 +108,18 @@ const AllSellers = () => {
                   <td>{sellers.name}</td>
                   <td>{sellers.email}</td>
                   <td>
-                    {sellers.status==='Verified' ? <button className="btn btn-secondary btn-sm">
-                     {sellers.status}
-                    </button> : <button onClick={()=>handleVerify(sellers._id)} className="btn btn-danger btn-sm">
-                     {sellers.status}
-                    </button> }
-                    
+                    {sellers.status === "Verified" ? (
+                      <button className="btn btn-secondary btn-sm">
+                        {sellers.status}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleVerify(sellers._id)}
+                        className="btn btn-danger btn-sm"
+                      >
+                        {sellers.status}
+                      </button>
+                    )}
                   </td>
                   {/* <td>{ sellers?.role !== 'admin' && <button onClick={() => handleMakeAdmin(sellers._id)} className='btn btn-xs btn-primary'>Make Admin</button>}</td> */}
 
@@ -133,7 +139,12 @@ const AllSellers = () => {
                                 } */}
                   {/* </td> */}
                   <td>
-                    <button onClick={()=>handleDelete(sellers._id)} className="btn btn-warning btn-sm">Delete</button>
+                    <button
+                      onClick={() => handleDelete(sellers._id)}
+                      className="btn btn-warning btn-sm"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

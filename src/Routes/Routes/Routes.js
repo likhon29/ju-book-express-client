@@ -27,106 +27,156 @@ import BuyerRoute from "../BuyerRoute/BuyerRoute";
 import DisplayError from "../../Pages/Shared/DisplayError/DisplayError";
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <Main></Main>,
-        errorElement: <DisplayError></DisplayError>,
+  {
+    path: "/",
+    element: <Main></Main>,
+    errorElement: <DisplayError></DisplayError>,
 
-        children: [
-            {
-                path: "/",
-                element: <Home></Home>
-            },
-            {
-                path: "/categories",
-                element: <BookCategory></BookCategory>
-            },
-            {
-                path: "/category/:id",
-                element: <PrivateRoute>
-                    <CategoryDetails></CategoryDetails>
-                </PrivateRoute>,
-                loader : ({params})=>fetch(`http://localhost:5000/category/${params.id}`)
-            }
-            ,
-            {
-                path: "/blogs",
-                element: <Blogs></Blogs>
-            },
-            {
-                path: "/blog/:id",
-                element: <BlogDetail></BlogDetail>
-            },
-            {
-                path: '/login',
-                element: <Login></Login>
-            },
-            {
-                path: '/register',
-                element: <Signup></Signup>
-            },
-            {
-                path: "/about",
-                element: <h1>About</h1>
-            }
-        ]
-    },
-    {
-        path: '/dashboard',
-        element: <PrivateRoute><DashBoardLayout></DashBoardLayout></PrivateRoute>,
-        errorElement: <DisplayError></DisplayError>,
-        children: [
-            {
-                path: '/dashboard',
-                element:<Profile></Profile>
-            },
-            {
-                path: '/dashboard/myOrders',
-                element: <BuyerRoute><MyOrders></MyOrders></BuyerRoute>
-            },
-            {
-                path: '/dashboard/myWishLists',
-                element: <BuyerRoute><MyWishList></MyWishList></BuyerRoute>
-            },
-            {
-                path: '/dashboard/payment/:id',
-                element: <BuyerRoute><Payment></Payment></BuyerRoute>,
-                loader: ({params})=>fetch(`http://localhost:5000/bookings/${params.id}`)
-            },
-            {
-                path: '/dashboard/addProduct',
-                element:<SellerRoute><AddProduct></AddProduct></SellerRoute> 
-            },
-            {
-                path: '/dashboard/myProducts',
-                element:<SellerRoute><MyProducts></MyProducts></SellerRoute> 
-            },
-            {
-                path: '/dashboard/myBuyers',
-                element: <SellerRoute><MyBuyers></MyBuyers></SellerRoute> 
-            },
-            {
-                path: '/dashboard/allSellers',
-                element:<AdminRoute><AllSellers></AllSellers></AdminRoute> 
-            },
-            {
-                path: '/dashboard/allBuyers',
-                element: <AdminRoute><AllBuyers></AllBuyers> </AdminRoute>
-            },
-            {
-                path: '/dashboard/reportedItem',
-                element: <AdminRoute><ReportedItem></ReportedItem></AdminRoute> 
-            },
-            {
-                path: '/dashboard/payment',
-                element: <AdminRoute><ReportedItem></ReportedItem></AdminRoute> 
-            },
-            
-        ]
-    },
-    {
-        path: "*",
-        element: <NotFound></NotFound>
-    }
-])
+    children: [
+      {
+        path: "/",
+        element: <Home></Home>,
+      },
+      {
+        path: "/categories",
+        element: <BookCategory></BookCategory>,
+      },
+      {
+        path: "/category/:id",
+        element: (
+          <PrivateRoute>
+            <CategoryDetails></CategoryDetails>
+          </PrivateRoute>
+        ),
+        loader: ({ params }) =>
+          fetch(
+            `https://ju-book-express-server.vercel.app/category/${params.id}`
+          ),
+      },
+      {
+        path: "/blogs",
+        element: <Blogs></Blogs>,
+      },
+      {
+        path: "/blog/:id",
+        element: <BlogDetail></BlogDetail>,
+      },
+      {
+        path: "/login",
+        element: <Login></Login>,
+      },
+      {
+        path: "/register",
+        element: <Signup></Signup>,
+      },
+      {
+        path: "/about",
+        element: <h1>About</h1>,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <DashBoardLayout></DashBoardLayout>
+      </PrivateRoute>
+    ),
+    errorElement: <DisplayError></DisplayError>,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Profile></Profile>,
+      },
+      {
+        path: "/dashboard/myOrders",
+        element: (
+          <BuyerRoute>
+            <MyOrders></MyOrders>
+          </BuyerRoute>
+        ),
+      },
+      {
+        path: "/dashboard/myWishLists",
+        element: (
+          <BuyerRoute>
+            <MyWishList></MyWishList>
+          </BuyerRoute>
+        ),
+      },
+      {
+        path: "/dashboard/payment/:id",
+        element: (
+          <BuyerRoute>
+            <Payment></Payment>
+          </BuyerRoute>
+        ),
+        loader: ({ params }) =>
+          fetch(
+            `https://ju-book-express-server.vercel.app/bookings/${params.id}`
+          ),
+      },
+      {
+        path: "/dashboard/addProduct",
+        element: (
+          <SellerRoute>
+            <AddProduct></AddProduct>
+          </SellerRoute>
+        ),
+      },
+      {
+        path: "/dashboard/myProducts",
+        element: (
+          <SellerRoute>
+            <MyProducts></MyProducts>
+          </SellerRoute>
+        ),
+      },
+      {
+        path: "/dashboard/myBuyers",
+        element: (
+          <SellerRoute>
+            <MyBuyers></MyBuyers>
+          </SellerRoute>
+        ),
+      },
+      {
+        path: "/dashboard/allSellers",
+        element: (
+          <AdminRoute>
+            <AllSellers></AllSellers>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/allBuyers",
+        element: (
+          <AdminRoute>
+            <AllBuyers></AllBuyers>{" "}
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/reportedItem",
+        element: (
+          <AdminRoute>
+            <ReportedItem></ReportedItem>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/payment",
+        element: (
+          <AdminRoute>
+            <ReportedItem></ReportedItem>
+          </AdminRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <NotFound></NotFound>,
+  },
+]);
 export default router;

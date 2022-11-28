@@ -7,7 +7,7 @@ const Profile = () => {
   const [userInfo, setUserInfo] = useState({});
   const { user } = useContext(AuthContext);
   useEffect(() => {
-    fetch(`http://localhost:5000/user/${user.email}`)
+    fetch(`https://ju-book-express-server.vercel.app/user/${user.email}`)
       .then((res) => res.json())
       .then((data) => setUserInfo(data));
   }, [user.email]);
@@ -28,8 +28,14 @@ const Profile = () => {
             {" "}
             <h3 className="text-white text-2xl bold uppercase font-sans mx-1">
               {userInfo.name}
-                      </h3>
-                      {userInfo.status==='Verified' && <img src="https://e7.pngegg.com/pngimages/605/284/png-clipart-check-mark-computer-icons-green-tick-miscellaneous-angle-thumbnail.png" width="30px" alt="" />}
+            </h3>
+            {userInfo.status === "Verified" && (
+              <img
+                src="https://e7.pngegg.com/pngimages/605/284/png-clipart-check-mark-computer-icons-green-tick-miscellaneous-angle-thumbnail.png"
+                width="30px"
+                alt=""
+              />
+            )}
           </div>
           <p>{user.email}</p>
           <h2 className="mt-2 uppercase text-3xl text-danger">

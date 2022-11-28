@@ -7,15 +7,15 @@ import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 const MyBuyers = () => {
   const { user } = useContext(AuthContext);
 
-  const url = `http://localhost:5000/myBuyers?email=${user.email}`;
+  const url = `https://ju-book-express-server.vercel.app/myBuyers?email=${user.email}`;
 
   const { data: myBuyers = [], refetch } = useQuery({
     queryKey: ["myBuyers", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
-        // headers: {
-        //     authorization: `bearer ${localStorage.getItem('accessToken')}`
-        // }
+        headers: {
+          authorization: `bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
       const data = await res.json();
       return data;
@@ -23,17 +23,16 @@ const MyBuyers = () => {
   });
   //   const [sellers, setSellers] = useState(allSellers);
 
-      console.log(myBuyers);
+  console.log(myBuyers);
   return (
     <div className="mx-20">
       <h3 className="text-3xl mb-5">My Buyers</h3>
       <div className="overflow-x-auto">
-        <table className="table w-full " >
-          <thead >
-            <tr >
+        <table className="table w-full ">
+          <thead>
+            <tr>
               <th></th>
-              
-              
+
               {/* <th>Photo</th> */}
               <th>Buyer Name</th>
               <th>Email</th>
@@ -49,8 +48,7 @@ const MyBuyers = () => {
               myBuyers?.map((buyers, i) => (
                 <tr key={buyers._id}>
                   <th>{i + 1}</th>
-                  
-                  
+
                   <td>{buyers.buyerName}</td>
                   <td>{buyers.buyerEmail}</td>
                   <td>{buyers.buyerPhone}</td>
@@ -68,7 +66,7 @@ const MyBuyers = () => {
 export default MyBuyers;
 
 //     const handleMakeAdmin = id => {
-//         fetch(`http://localhost:5000/users/admin/${id}`, {
+//         fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
 //             method: 'PUT',
 //             headers: {
 //                 authorization: `bearer ${localStorage.getItem('accessToken')}`
@@ -87,7 +85,7 @@ export default MyBuyers;
 //           "Are you sure, you want to delete this sellers?"
 //         );
 //         if (proceed) {
-//           fetch(`http://localhost:5000/users/admin/${id}`, {
+//           fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
 //             method: "DELETE",
 //             // authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
 //           })
@@ -102,7 +100,7 @@ export default MyBuyers;
 //         }
 //   };
 //   const handleVerify=(id) => {
-//     fetch(`http://localhost:5000/users/seller/${id}`, {
+//     fetch(`https://ju-book-express-server.vercel.app/users/seller/${id}`, {
 //       method: 'PUT',
 //       // headers: {
 //       //     authorization: `bearer ${localStorage.getItem('accessToken')}`

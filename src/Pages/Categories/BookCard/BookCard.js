@@ -4,6 +4,7 @@ import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
 import Loading from "../../Shared/Loading/Loading";
 import BookingModal from "../BookingModal/BookingModal";
 import icon from "../../../Assets/images/images.png";
+import toast from "react-hot-toast";
 const BookCard = ({ book, setSelectedBook }) => {
   const { user } = useContext(AuthContext);
   // console.log("from book card", user);
@@ -31,7 +32,9 @@ const BookCard = ({ book, setSelectedBook }) => {
   } = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/user/${user.email}`);
+      const res = await fetch(
+        `https://ju-book-express-server.vercel.app/user/${user.email}`
+      );
       const data = await res.json();
       return data;
     },
@@ -39,7 +42,9 @@ const BookCard = ({ book, setSelectedBook }) => {
   const { data: sellerInfo = [] } = useQuery({
     queryKey: ["sellerInfo"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/user/${seller_email}`);
+      const res = await fetch(
+        `https://ju-book-express-server.vercel.app/user/${seller_email}`
+      );
       const data = await res.json();
       return data;
     },
@@ -48,6 +53,22 @@ const BookCard = ({ book, setSelectedBook }) => {
   if (isLoading) {
     return <Loading></Loading>;
   }
+
+  const handleReportedItem = (id) => {
+    fetch(`https://ju-book-express-server.vercel.app/addToReportedItem/${id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.modifiedCount > 0) {
+          toast.success("Report this item successfully.");
+          refetch();
+        }
+      });
+  };
   return (
     <div>
       {/* <div className="card lg:card-side bg-base-100 shadow-xl">
@@ -86,13 +107,18 @@ const BookCard = ({ book, setSelectedBook }) => {
             )}{" "}
           </div>
 
-          <img
-            src={seller_dp}
-            width="10%"
-            height=""
-            className="rounded-full"
-            alt=""
-          />
+          {book.isReported ? (
+            <>
+              <label className="btn" disabled>
+                Already Reported to Admin
+              </label>
+            </>
+          ) : (
+            <label className="btn" onClick={() => handleReportedItem(book._id)}>
+              Report to Admin
+            </label>
+          )}
+
           {userInfo?.role === "buyer" && (
             <label
               htmlFor="my-modal"

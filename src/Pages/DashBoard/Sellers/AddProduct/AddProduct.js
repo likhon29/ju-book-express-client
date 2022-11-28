@@ -22,24 +22,27 @@ const AddProduct = () => {
   } = useQuery({
     queryKey: ["userInfo"],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/user/${user.email}`);
+      const res = await fetch(
+        `https://ju-book-express-server.vercel.app/user/${user.email}`
+      );
       const data = await res.json();
       return data;
     },
   });
 
   const imageHostKey = process.env.REACT_APP_imgbb_key;
-
   const navigate = useNavigate();
 
   const handleAddProduct = (data) => {
     const cat_name = data.category;
     console.log(cat_name);
 
+    console.log(data);
     const image = data.image[0];
     const formData = new FormData();
     formData.append("image", image);
     const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+    console.log(url);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -62,18 +65,18 @@ const AddProduct = () => {
             date: date,
             number: data.number,
             category: data.category,
-            productStatus: 'available',
-            isAdvertised:'no',
+            productStatus: "available",
+            isAdvertised: "no",
             condition: data.condition,
             description: data.description,
           };
 
           // save doctor information to the database
-          fetch("http://localhost:5000/products", {
+          fetch("https://ju-book-express-server.vercel.app/addProducts", {
             method: "POST",
             headers: {
               "content-type": "application/json",
-              //   authorization: `bearer ${localStorage.getItem("accessToken")}`,
+              authorization: `bearer ${localStorage.getItem("accessToken")}`,
             },
             body: JSON.stringify(bookInfo),
           })

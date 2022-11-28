@@ -33,7 +33,7 @@ const BookingModal = ({ selectedBook, setSelectedBook }) => {
     const bookingDate = new Date();
 
     const bookingInfo = {
-      _id,
+      book_id: selectedBook._id,
       bookName: selectedBook.name,
       buyerName: name,
       buyerEmail: email,
@@ -46,35 +46,36 @@ const BookingModal = ({ selectedBook, setSelectedBook }) => {
     };
     console.log(bookingInfo);
 
-    fetch('http://localhost:5000/bookings', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(bookingInfo)
-    })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-            if (data.acknowledged) {
-                setSelectedBook(null);
-                // setIsBooked(true);
-                navigate('/dashboard/myOrders');
-                toast.success('Booking confirmed');
-                // refetch();
+    fetch("https://ju-book-express-server.vercel.app/bookings", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
 
-            }
-            else{
-                toast.error(data.message);
-            }
-        })
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
+      body: JSON.stringify(bookingInfo),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.acknowledged) {
+          setSelectedBook(null);
+          // setIsBooked(true);
+          navigate("/dashboard/myOrders");
+          toast.success("Booking confirmed");
+          // refetch();
+        } else {
+          toast.error(data.message);
+        }
+      });
   };
   return (
     <>
       <input type="checkbox" id="my-modal" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box relative">
-          <label onClick={()=>setSelectedBook(null)}
+          <label
+            onClick={() => setSelectedBook(null)}
             htmlFor="my-modal"
             className="btn btn-sm btn-circle absolute right-2 top-2"
           >

@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 const MyProducts = () => {
   const { user } = useContext(AuthContext);
 
-  const url = `http://localhost:5000/myProducts?email=${user?.email}`;
+  const url = `https://ju-book-express-server.vercel.app/myProducts?email=${user?.email}`;
 
-  const { data: products = [] ,refetch} = useQuery({
-    queryKey: ["products", user?.email],
+  const { data: allProducts = [], refetch } = useQuery({
+    queryKey: ["allProducts", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
         // headers: {
@@ -20,27 +20,47 @@ const MyProducts = () => {
       return data;
     },
   });
-  console.log(products);
+  console.log(allProducts);
+  const [products, setProducts] = useState(allProducts);
   const handleAdvertisement = (id) => {
-
-    fetch(`http://localhost:5000/seller/myProduct/${id}`, {
-      method: 'PATCH',
+    fetch(`https://ju-book-express-server.vercel.app/seller/myProduct/${id}`, {
+      method: "PATCH",
       // headers: {
       //     authorization: `bearer ${localStorage.getItem('accessToken')}`
       // }
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.modifiedCount > 0) {
-      
-          toast.success('Add Product for Advertisement successfully.')
+          toast.success("Add Product for Advertisement successfully.");
           refetch();
         }
+      });
+  };
 
-      })
-   
-  }
-  
+  const handleDelete = (id) => {
+    const proceed = window.confirm(
+      "Are you sure, you want to delete your product?"
+    );
+    if (proceed) {
+      fetch(
+        `https://ju-book-express-server.vercel.app/seller/myProduct/${id}`,
+        {
+          method: "DELETE",
+          authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.deletedCount > 0) {
+            const remaining = products.filter((pd) => pd._id !== id);
+            setProducts(remaining);
+            alert("Product deleted successfully");
+            refetch();
+          }
+        });
+    }
+  };
   return (
     <div className="mx-20">
       <h3 className="text-3xl mb-5">My Products</h3>
@@ -58,8 +78,8 @@ const MyProducts = () => {
             </tr>
           </thead>
           <tbody>
-            {products &&
-              products?.map((product, i) => (
+            {allProducts &&
+              allProducts?.map((product, i) => (
                 <tr key={product._id}>
                   <th>{i + 1}</th>
                   <td>
@@ -77,25 +97,26 @@ const MyProducts = () => {
                   <td>{product.productStatus}</td>
 
                   <td>
-                    {product.isAdvertised==='no' ?<>
-                      <Link>
-                      <button
-                        onClick={() => handleAdvertisement(product._id)}
-                        className="btn btn-primary btn-sm"
-                      >
-                        Make Advertisement
-                      </button>
-                      </Link>
-                    </> : <>
-                    
-                    <Link>
-                      <button
-                       
-                        className="btn btn-success btn-sm"
-                      disabled>
-                        Advertised
-                      </button>
-                    </Link></>}
+                    {product.isAdvertised === "no" ? (
+                      <>
+                        <Link>
+                          <button
+                            onClick={() => handleAdvertisement(product._id)}
+                            className="btn btn-primary btn-sm"
+                          >
+                            Make Advertisement
+                          </button>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link>
+                          <button className="btn btn-success btn-sm" disabled>
+                            Advertised
+                          </button>
+                        </Link>
+                      </>
+                    )}
 
                     {/* {
                                     booking.price && !booking.paid && <Link
@@ -111,7 +132,12 @@ const MyProducts = () => {
                                 } */}
                   </td>
                   <td>
-                    <button className="btn btn-warning btn-sm">Delete</button>
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="btn btn-warning btn-sm"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -1,43 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 const AllBuyers = () => {
-    const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
-  const url = 'http://localhost:5000/allBuyers?role=buyer';
+  const url = "https://ju-book-express-server.vercel.app/allBuyers?role=buyer";
 
-  const { data: allBuyers = [] ,refetch} = useQuery({
+  const { data: allBuyers = [], refetch } = useQuery({
     queryKey: ["allBuyers", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
-        // headers: {
-        //     authorization: `bearer ${localStorage.getItem('accessToken')}`
-        // }
+        headers: {
+          authorization: `bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
       const data = await res.json();
       return data;
     },
   });
   console.log(allBuyers);
-  const handleMakeAdmin = id => {
-    fetch(`http://localhost:5000/users/admin/${id}`, {
-        method: 'PUT', 
-        headers: {
-            authorization: `bearer ${localStorage.getItem('accessToken')}`
-        }
+  const [buyers, setBuyers] = useState(allBuyers);
+  const handleMakeAdmin = (id) => {
+    fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
     })
-    .then(res => res.json())
-    .then(data => {
-        if(data.modifiedCount > 0){
-            toast.success('Make admin successful.')
-            refetch();
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.modifiedCount > 0) {
+          toast.success("Make admin successful.");
+          refetch();
         }
-    })
-}
-    return (
-        <div className="mx-20">
+      });
+  };
+
+  const handleDelete = (id) => {
+    const proceed = window.confirm(
+      "Are you sure, you want to delete this sellers?"
+    );
+    if (proceed) {
+      fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
+        method: "DELETE",
+        // authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.deletedCount > 0) {
+            const remaining = buyers.filter((seller) => seller._id !== id);
+            setBuyers(remaining);
+            alert("User deleted successfully");
+          }
+        });
+    }
+  };
+  return (
+    <div className="mx-20">
       <h3 className="text-3xl mb-5">All Buyers</h3>
       <div className="overflow-x-auto">
         <table className="table w-full">
@@ -69,11 +90,20 @@ const AllBuyers = () => {
                   </td>
                   <td>{buyers.name}</td>
                   <td>{buyers.email}</td>
-                  <td>{ buyers?.role !== 'admin' && <button onClick={() => handleMakeAdmin(buyers._id)} className='btn btn-xs btn-primary'>Make Admin</button>}</td>
+                  <td>
+                    {buyers?.role !== "admin" && (
+                      <button
+                        onClick={() => handleMakeAdmin(buyers._id)}
+                        className="btn btn-xs btn-primary"
+                      >
+                        Make Admin
+                      </button>
+                    )}
+                  </td>
 
                   {/* <td> */}
-                    {/* <button className="btn btn-primary btn-sm">Advertised</button> */}
-                    {/* {
+                  {/* <button className="btn btn-primary btn-sm">Advertised</button> */}
+                  {/* {
                                     booking.price && !booking.paid && <Link
                                         to={`/dashboard/payment/${booking._id}`}
                                     >
@@ -85,18 +115,22 @@ const AllBuyers = () => {
                                 {
                                     booking.price && booking.paid && <span className='text-green-500'>Paid</span>
                                 } */}
-                      {/* </td> */}
-                      <td><button className="btn btn-warning btn-sm">Delete</button></td>
+                  {/* </td> */}
+                  <td>
+                    <button
+                      onClick={() => handleDelete(buyers._id)}
+                      className="btn btn-warning btn-sm"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
     </div>
-    );
+  );
 };
 
 export default AllBuyers;
-
-
-

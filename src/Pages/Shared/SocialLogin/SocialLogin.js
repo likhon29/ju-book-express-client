@@ -1,32 +1,42 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
+import useToken from "../../../Hooks/useToken";
 
 const SocialLogin = () => {
-  const [createdUserEmail, setCreatedUserEmail] = useState("");
-
+  const [googleUserEmail, setGoogleUserEmail] = useState("");
+  const [token] = useToken(googleUserEmail);
   const { googleSignIn } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
+  if (token) {
+    navigate("/");
+  }
   const handleGoogleSIgnIn = () => {
     googleSignIn()
       .then((result) => {
         const user = result.user;
+
+        setGoogleUserEmail(user.email);
         const userInfo = {
           name: user.displayName,
           email: user.email,
           image: user.photoURL,
           role: "buyer",
-          
         };
+
         saveUser(userInfo);
-        console.log(user);
-        navigate("/");
+        navigate(from, { replace: true });
+        toast.success("Welcome to Ju Book Express...");
       })
       .catch((err) => console.error(err));
   };
   const saveUser = (user) => {
-    fetch("http://localhost:5000/users", {
+    fetch("https://ju-book-express-server.vercel.app/users", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -35,9 +45,18 @@ const SocialLogin = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setCreatedUserEmail(data.email);
-        console.log(data);
-        navigate("/");
+        getUserToken(user.email);
+      });
+  };
+
+  const getUserToken = (email) => {
+    fetch(`https://ju-book-express-server.vercel.app/jwt?email=${email}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          // setToken(data.accessToken);
+        }
       });
   };
   return (
