@@ -8,8 +8,8 @@ const Banner = () => {
                 {/* <img src={img} className="rounded-lg lg:w-1/2 shadow-2xl" alt='' /> */}
                 <Slider></Slider>
                 <div>
-                    <h1 className="text-5xl font-bold">Box Office News!</h1>
-                    <p className="py-6">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
+                    <h1 className="text-5xl font-bold">Sold Your Book Here!</h1>
+                    <p className="py-6">this is an exciting platform to sold your unusalble book and shared with everyone</p>
                     {/* <PrimaryButton>Getting Started</PrimaryButton> */}
                 </div>
             </div>
