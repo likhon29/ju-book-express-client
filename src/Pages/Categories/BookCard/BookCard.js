@@ -18,10 +18,11 @@ const BookCard = ({ book, setSelectedBook }) => {
     number,
     description,
     oldPrice,
-    seller_dp,
+
     seller_name,
     seller_email,
 
+    category,
     date,
     time,
   } = book;
@@ -64,27 +65,86 @@ const BookCard = ({ book, setSelectedBook }) => {
       .then((res) => res.json())
       .then((data) => {
         if (data.modifiedCount > 0) {
-          toast.success("Report this item successfully.");
           refetch();
+          toast.success("Report this item successfully.");
         }
       });
   };
+
   return (
     <div>
-      {/* <div className="card lg:card-side bg-base-100 shadow-xl">
+      <div className="card w-96 bg-base-100 shadow-xl">
         <figure>
-          <img src={image} alt="Album" />
+          <img src={image} width="40%" alt="book" />
         </figure>
         <div className="card-body">
-          <h2 className="card-title">New album is released!</h2>
-          <p>Click the button to listen on Spotiwhy app.</p>
+          <h2 className="card-title">
+            {name}
+            <div className="badge badge-secondary">Available</div>
+          </h2>
+          <p className="text-orange-500 text-3xl">{price} TK</p>
+          <p>Old Price: {oldPrice} Tk</p>
+          <p>{description}</p>
+
+          <p className="flex">
+            Seller: {seller_name}{" "}
+            {sellerInfo.status === "Verified" && (
+              <span className="px-2">
+                <img src={icon} width="25px" alt="" />
+              </span>
+            )}{" "}
+          </p>
+
+          <p>Seller Number: {number}</p>
+          <p>Location: {location}</p>
+
+          <p>
+            Year of Use:
+            {2022 - time ? (
+              <>{2022 - time} years</>
+            ) : (
+              <>
+                {" "}
+                <span> lesser than 1 year</span>{" "}
+              </>
+            )}{" "}
+            years
+          </p>
+          <p>Published:{date}</p>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">Listen</button>
+            <div className="badge  badge-outline">{condition} Condition</div>
+            <div className="badge badge-outline">{category}</div>
+          </div>
+          <div className="flex justify-between">
+            {book.isReported ? (
+              <>
+                <label className="btn btn-sm w-1/2" disabled>
+                  Already Reported to Admin
+                </label>
+              </>
+            ) : (
+              <label
+                className="btn btn-sm w-1/2"
+                onClick={() => handleReportedItem(book._id)}
+              >
+                Report to Admin
+              </label>
+            )}
+
+            {userInfo?.role === "buyer" && (
+              <label
+                htmlFor="my-modal"
+                className="btn btn-sm "
+                onClick={() => setSelectedBook(book)}
+              >
+                Book Now
+              </label>
+            )}
           </div>
         </div>
-      </div> */}
+      </div>
 
-      <div className="card card-side bg-base-100 shadow-xl m-5">
+      {/* <div className="card card-side bg-base-100 shadow-xl m-5">
         <figure className="w-1/4 p-3 rounded-sm">
           <img src={image} alt="" className="" />
         </figure>
@@ -130,7 +190,30 @@ const BookCard = ({ book, setSelectedBook }) => {
           )}
           <div className="card-actions justify-end"></div>
         </div>
-      </div>
+      </div> */}
+
+      {/* <div className="card w-96 bg-base-100 shadow-xl">
+        {
+          (product.productStatus ==='!sold') && 
+          
+            <>
+            <figure><img src={product.image} alt="Shoes" /></figure>
+            <div className="card-body">
+              <h2 className="card-title">
+                {product.name}
+                <div className="badge badge-secondary">NEW</div>
+              </h2>
+              <p>{product.price} TK</p>
+              <div className="card-actions justify-end">
+                <div className="badge bg-neutral text-white badge-outline">{product.condition} Condition</div>
+                <div className="badge badge-outline">{product.category}</div> 
+              </div>
+            </div>
+          </>
+           
+          
+        }
+</div> */}
     </div>
   );
 };

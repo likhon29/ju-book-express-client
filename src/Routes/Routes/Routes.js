@@ -25,6 +25,7 @@ import BlogDetail from "../../Pages/Blogs/Blog/BlogDetail";
 import Payment from "../../Pages/DashBoard/Payment/Payment";
 import BuyerRoute from "../BuyerRoute/BuyerRoute";
 import DisplayError from "../../Pages/Shared/DisplayError/DisplayError";
+import About from "../../Pages/Home/About/About";
 
 const router = createBrowserRouter([
   {
@@ -71,7 +72,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/about",
-        element: <h1>About</h1>,
+        element: <About></About>,
       },
     ],
   },
@@ -106,11 +107,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/payment/:id",
-        element: (
-          <BuyerRoute>
-            <Payment></Payment>
-          </BuyerRoute>
-        ),
+        // element: (
+        //   <BuyerRoute>
+        //     <Payment></Payment>
+        //   </BuyerRoute>
+        // ),
+        element: <Payment></Payment>,
         loader: ({ params }) =>
           fetch(
             `https://ju-book-express-server.vercel.app/bookings/${params.id}`

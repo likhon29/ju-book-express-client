@@ -11,18 +11,21 @@ const CategoryDetails = () => {
   return (
     <div>
       <h1 className="text-primary text-5xl p-3">Book List for {category}</h1>
-      <p className="text-secondary text-3xl p-4">
+      {/* <p className="text-secondary text-3xl p-4">
         Available Books:{categoryData.length}
-      </p>
+      </p> */}
 
-      <div className="w-3/4 mx-auto">
+     {categoryData.length ?  <div className="grid mt-8 gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-5">
+        
         {categoryData.map((book) => (
+          book.productStatus !== 'sold' &&
           <BookCard book={book} key={book._id} setSelectedBook={setSelectedBook}></BookCard>
         ))}
-      </div>
-      {/* {selectedBook && (
-        <BookingModal selectedBook={selectedBook} setSelectedBook={setSelectedBook}></BookingModal>
-      )} */}
+      </div> :
+        <>
+          <h1 className="text-5xl">No Book available for sale</h1>
+      </>}
+      
       {
         selectedBook && 
         <BookingModal selectedBook={selectedBook} setSelectedBook={setSelectedBook}></BookingModal>

@@ -21,17 +21,18 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
 import { useLoaderData, useNavigation } from 'react-router-dom';
+import Loading from '../../Shared/Loading/Loading';
 import CheckoutForm from './CheckoutForm';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK);
 
 const Payment = () => {
     const booking = useLoaderData();
-    // const navigation = useNavigation();
-    const { bookName, price, bookingDate } = booking;
-    // if(navigation.state === "loading"){
-    //     return <Loading></Loading>
-    // }
+    const navigation = useNavigation();
+    const { bookName, price, bookingDate,book_id } = booking;
+    if(navigation.state === "loading"){
+        return <Loading></Loading>
+    }
     return (
         <div className="flex  items-center justify-center mt-20  mx-auto  " >
             <div className="3/4 rounded shadow-xl bg-slate-200 p-10">

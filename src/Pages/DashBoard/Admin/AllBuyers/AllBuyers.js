@@ -45,7 +45,9 @@ const AllBuyers = () => {
     if (proceed) {
       fetch(`https://ju-book-express-server.vercel.app/users/admin/${id}`, {
         method: "DELETE",
-        // authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
+        headers: {
+          authorization: `bearer ${localStorage.getItem("accessToken")}`,
+        },
       })
         .then((res) => res.json())
         .then((data) => {

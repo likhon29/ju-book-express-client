@@ -9,6 +9,7 @@ const Navbar = () => {
       .then(() => {})
       .catch((err) => console.log(err));
   };
+  console.log(user,"navbar")
   const navItems = (
     <React.Fragment>
       <li>
@@ -25,6 +26,8 @@ const Navbar = () => {
       </li>
       {user?.uid ? (
         <>
+          
+          
           <li>
             <Link to="/dashboard">Dashboard</Link>
           </li>
@@ -41,12 +44,12 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar   flex justify-between">
+    <div className="navbar bg-cyan-50	px-20  flex justify-between">
       <div className="navbar-start">
         <div className="dropdown ">
           <div className="flex items-center">
             
-            <label tabIndex={0} className="btn btn-ghost lg:hidden">
+            <label tabIndex={0} className="btn btn-primary lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -72,6 +75,9 @@ const Navbar = () => {
             className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
           >
             {navItems}
+
+            {/* <img src={user?.photoURL} width='30%' alt="" /> */}
+
           </ul>
         </div>
         <Link to="/" className="mx-20">
@@ -80,6 +86,8 @@ const Navbar = () => {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal p-0">{navItems}</ul>
+        {/* <img src={user?.photoURL} width='10%' alt="" className="rounded-full"/> */}
+
       </div>
       <label
         htmlFor="dashboard-drawer"

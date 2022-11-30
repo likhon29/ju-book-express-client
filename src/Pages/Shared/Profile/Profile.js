@@ -8,9 +8,9 @@ const Profile = () => {
   const [userInfo, setUserInfo] = useState({});
   const { user } = useContext(AuthContext);
   useEffect(() => {
-    axios.get(`https://ju-book-express-server.vercel.app/user/${user.email}`)
-      // .then((res) => res.json())
-      .then((data) => setUserInfo(data));
+    axios
+      .get(`https://ju-book-express-server.vercel.app/user/${user.email}`)
+      .then((data) => setUserInfo(data.data));
   }, [user.email]);
   console.log(userInfo);
   return (

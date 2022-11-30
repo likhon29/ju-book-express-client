@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../../Contexts/AuthProvider/AuthProvider";
 
@@ -20,6 +20,7 @@ const MyOrders = () => {
       return data;
     },
   });
+
   console.log(bookings);
   return (
     <div className="mx-20">
@@ -29,6 +30,8 @@ const MyOrders = () => {
           <thead>
             <tr>
               <th></th>
+              <th>Product Image</th>
+
               <th>Book Name</th>
               <th>Price</th>
               {/* <th>Date</th> */}
@@ -41,6 +44,9 @@ const MyOrders = () => {
               bookings?.map((booking, i) => (
                 <tr key={booking._id}>
                   <th>{i + 1}</th>
+                  <td>
+                    <img src={booking.image} width="50px" alt="" />
+                  </td>
                   <td>{booking.bookName}</td>
                   <td>{booking.price} Tk.</td>
                   {/* <td>{booking.bookingDate.split('T')[0]}</td> */}

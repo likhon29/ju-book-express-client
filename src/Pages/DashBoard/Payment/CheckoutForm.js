@@ -1,5 +1,7 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = ({ booking }) => {
   const [cardError, setCardError] = useState("");
@@ -7,19 +9,19 @@ const CheckoutForm = ({ booking }) => {
   const [processing, setProcessing] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
-
+  const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-  const { price, buyerEmail, buyerName, _id } = booking;
+  const { price, buyerEmail, buyerName, _id, book_id } = booking;
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("https://ju-book-express-server.vercel.app/create-payment-intent", {
       method: "POST",
-      // headers: {
-      //     "Content-Type": "application/json",
-      //     authorization: `bearer ${localStorage.getItem('accessToken')}`
-      // },
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `bearer ${localStorage.getItem("accessToken")}`,
+      },
       body: JSON.stringify({ price }),
     })
       .then((res) => res.json())
@@ -74,6 +76,7 @@ const CheckoutForm = ({ booking }) => {
         transactionId: paymentIntent.id,
         email: buyerEmail,
         bookingId: _id,
+        book_id: book_id,
       };
       console.log(payment);
       fetch("https://ju-book-express-server.vercel.app/payments", {
@@ -90,6 +93,10 @@ const CheckoutForm = ({ booking }) => {
           if (data.insertedId) {
             setSuccess("Congrats! your payment completed");
             setTransactionId(paymentIntent.id);
+            // navigate("/dashboard/myOrders");
+            toast.success("Congrats! your payment completed");
+          } else {
+            toast.error(data.message);
           }
         });
     }
@@ -115,17 +122,21 @@ const CheckoutForm = ({ booking }) => {
             },
           }}
         />
-        <button
-          className="btn w-3/6 mt-10 btn-warning"
-          type="submit"
-          disabled={
-            !stripe ||
-            // ||!clientSecret
-            processing
-          }
-        >
-          Pay
-        </button>
+        {success.length ? (
+          <>
+            <button className="btn-secondary w-3/6 mt-5 p-2 rounded" disabled>
+              Paid
+            </button>
+          </>
+        ) : (
+          <button
+            className="btn w-3/6 mt-10 btn-warning"
+            type="submit"
+            disabled={!stripe || !clientSecret || processing}
+          >
+            Pay
+          </button>
+        )}
       </form>
       <p className="text-red-500">{cardError}</p>
       {success && (

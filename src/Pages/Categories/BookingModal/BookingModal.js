@@ -35,6 +35,7 @@ const BookingModal = ({ selectedBook, setSelectedBook }) => {
     const bookingInfo = {
       book_id: selectedBook._id,
       bookName: selectedBook.name,
+      image: selectedBook.image,
       buyerName: name,
       buyerEmail: email,
       buyerPhone: phone,

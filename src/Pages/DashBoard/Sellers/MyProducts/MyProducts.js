@@ -47,7 +47,9 @@ const MyProducts = () => {
         `https://ju-book-express-server.vercel.app/seller/myProduct/${id}`,
         {
           method: "DELETE",
-          authorization: `Bearer ${localStorage.getItem("tourist-man-token")}`,
+          headers: {
+            authorization: `bearer ${localStorage.getItem("accessToken")}`,
+          },
         }
       )
         .then((res) => res.json())
@@ -72,7 +74,7 @@ const MyProducts = () => {
               <th>Photo</th>
               <th>Book Name</th>
               <th>Price</th>
-              <th>Status</th>
+              <th>Sales Status</th>
               <th>Advertisement</th>
               <th>Action</th>
             </tr>
@@ -94,10 +96,23 @@ const MyProducts = () => {
                   </td>
                   <td>{product.name}</td>
                   <td>{product.price}</td>
-                  <td>{product.productStatus}</td>
+                  <td className="">
+                    {product.productStatus === "available" ? (
+                      <span className="badge bg-secondary badge-outline">
+                        {product.productStatus}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="badge bg-neutral text-white badge-outline">
+                          {product.productStatus}
+                        </span>
+                      </>
+                    )}
+                  </td>
 
                   <td>
-                    {product.isAdvertised === "no" ? (
+                    {product.isAdvertised === "no" &&
+                    product.productStatus === "available" ? (
                       <>
                         <Link>
                           <button

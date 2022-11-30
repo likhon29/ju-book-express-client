@@ -23,7 +23,12 @@ const AddProduct = () => {
     queryKey: ["userInfo"],
     queryFn: async () => {
       const res = await fetch(
-        `https://ju-book-express-server.vercel.app/user/${user.email}`
+        `https://ju-book-express-server.vercel.app/user/${user.email}`,
+        {
+          headers: {
+            authorization: `bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
       );
       const data = await res.json();
       return data;
@@ -53,7 +58,7 @@ const AddProduct = () => {
           console.log(imgData.data.url);
           const date = new Date();
           const bookInfo = {
-            seller_name: user.displayName,
+            seller_name: userInfo.name,
             seller_email: user.email,
             seller_status: userInfo.status,
             name: data.bookName,
@@ -70,7 +75,7 @@ const AddProduct = () => {
             condition: data.condition,
             description: data.description,
           };
-
+          // console.log(bookInfo);
           // save doctor information to the database
           fetch("https://ju-book-express-server.vercel.app/addProducts", {
             method: "POST",
@@ -237,10 +242,13 @@ const AddProduct = () => {
         <div className="form-control w-full max-w-xs">
           <label className="label">
             {" "}
-            <span className="label-text">Year of Purchase (Month)</span>
+            <span className="label-text">
+              Year of Purchase (etc. 2019/2020/2021/2022){" "}
+            </span>
           </label>
           <input
             type="text"
+            placeholder="Enter a year of purchased book"
             {...register("time", {
               required: true,
             })}
