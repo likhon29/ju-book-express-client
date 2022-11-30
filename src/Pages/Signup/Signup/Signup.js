@@ -54,7 +54,7 @@ const Signup = () => {
                 role: data.role,
                 status: "unverified",
               };
-              handleUpdateUserProfile(data.name, image);
+              handleUpdateUserProfile(user.name);
               saveUser(user);
             }
           });
@@ -65,12 +65,12 @@ const Signup = () => {
       });
   };
 
-  const handleUpdateUserProfile = (name, photoURL) => {
-    console.log(photoURL, "added photo");
+  const handleUpdateUserProfile = (name) => {
+   
     const profile = {
       displayName: name,
-      photoURL: photoURL,
     };
+    console.log("profile",profile);
     updateUser(profile)
       .then(() => {})
       .catch((error) => console.error(error));

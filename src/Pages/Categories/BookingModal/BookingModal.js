@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
@@ -22,6 +23,12 @@ const BookingModal = ({ selectedBook, setSelectedBook }) => {
     time,
   } = selectedBook;
   const { user } = useContext(AuthContext);
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    axios
+      .get(`https://ju-book-express-server.vercel.app/user/${user.email}`)
+      .then((data) => setUserInfo(data.data));
+  }, [user.email]);
   const navigate = useNavigate();
   const handleBooking = (event) => {
     event.preventDefault();
@@ -36,7 +43,7 @@ const BookingModal = ({ selectedBook, setSelectedBook }) => {
       book_id: selectedBook._id,
       bookName: selectedBook.name,
       image: selectedBook.image,
-      buyerName: name,
+      buyerName: userInfo.name,
       buyerEmail: email,
       buyerPhone: phone,
       buyerLocation: location,

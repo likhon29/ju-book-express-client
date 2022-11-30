@@ -21,7 +21,7 @@ const BookCard = ({ book, setSelectedBook }) => {
 
     seller_name,
     seller_email,
-
+    seller_status,
     category,
     date,
     time,
@@ -50,7 +50,8 @@ const BookCard = ({ book, setSelectedBook }) => {
       return data;
     },
   });
-  console.log(sellerInfo);
+
+  console.log(sellerInfo.status, "sellerInfo");
   if (isLoading) {
     return <Loading></Loading>;
   }
@@ -87,12 +88,14 @@ const BookCard = ({ book, setSelectedBook }) => {
           <p>{description}</p>
 
           <p className="flex">
-            Seller: {seller_name}{" "}
+            Seller: {seller_name + " " + sellerInfo.status}{" "}
             {sellerInfo.status === "Verified" && (
-              <span className="px-2">
-                <img src={icon} width="25px" alt="" />
-              </span>
-            )}{" "}
+              <img
+                src="https://e7.pngegg.com/pngimages/605/284/png-clipart-check-mark-computer-icons-green-tick-miscellaneous-angle-thumbnail.png"
+                width="30px"
+                alt=""
+              />
+            )}
           </p>
 
           <p>Seller Number: {number}</p>
